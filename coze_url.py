@@ -5,21 +5,21 @@ from common.log import logger
 from plugins import *
 
 @plugins.register(
-    name="coze-url",
-    desire_priority=66,
+    name="coze_url",
+    desire_priority=77,
     hidden=False,
     desc="优化Coze返回结果中的图片和网址链接。",
     version="1.0",
     author="YRRR",
 )
-class coze-url(Plugin):
+class coze_url(Plugin):
     def __init__(self):
         super().__init__()
         try:
             self.handlers[Event.ON_DECORATE_REPLY] = self.on_decorate_reply
-            logger.info("[coze-url] inited.")
+            logger.info("[coze_url] inited.")
         except Exception as e:
-            logger.warn("[coze-url] init failed, ignore.")
+            logger.warn("[coze_url] init failed, ignore.")
             raise e
 
     def on_decorate_reply(self, e_context: EventContext):
@@ -55,7 +55,7 @@ class coze-url(Plugin):
                 # 使用 set 去重并保留顺序
                 unique_png_matches = list(dict.fromkeys(png_matches))  # 使用 dict.fromkeys 保持顺序并去重
                 replies = [Reply(ReplyType.IMAGE_URL, url) for url in unique_png_matches]
-                logger.info(f"[Nicecoze] found {len(replies)} unique .png images.")
+                logger.info(f"[coze_url] found {len(replies)} unique .png images.")
                 for reply in replies:
                     channel.send(reply, context)  # 发送图片链接
 
@@ -97,14 +97,14 @@ class coze-url(Plugin):
             content_list = content.split('\n')
             new_content_list = [re.sub(r'\((https?://[^\s]+)\)$', r' \1', line) for line in content_list]
             if new_content_list != content_list:
-                logger.info(f"[coze-url] parenthesis in the url has been removed, content={content}")
+                logger.info(f"[coze_url] parenthesis in the url has been removed, content={content}")
                 reply = Reply(ReplyType.TEXT, '\n'.join(new_content_list).strip())
                 e_context["reply"] = reply  # 保留并输出修改后的文本内容
             else:
                 e_context["reply"].content = content  # 输出处理后的文本内容
 
         except Exception as e:
-            logger.warn(f"[coze-url] on_decorate_reply failed, content={content}, error={e}")
+            logger.warn(f"[coze_url] on_decorate_reply failed, content={content}, error={e}")
         finally:
             e_context.action = EventAction.CONTINUE  # 确保其他内容不会被阻止
 
