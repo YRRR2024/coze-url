@@ -1,1 +1,1 @@
-from .coze-url import *
+from .coze_url import *
